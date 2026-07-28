@@ -1,0 +1,32 @@
+# OCINodeClass: OCI 固有の「ノードの作り方」テンプレート
+# <...> は自分の環境の値に置き換えること（docs/01-prerequisites.md 参照）
+apiVersion: oci.oraclecloud.com/v1beta1
+kind: OCINodeClass
+metadata:
+  name: default
+spec:
+  # 起動できるシェイプの候補（Flex シェイプの OCPU / メモリ）
+  shapeConfigs:
+    - ocpus: 1
+      memoryInGbs: 8
+    - ocpus: 2
+      memoryInGbs: 16
+
+  # ブートボリューム & イメージ（OKE 対応イメージを自動選択）
+  volumeConfig:
+    bootVolumeConfig:
+      sizeInGBs: 50
+      imageConfig:
+        imageType: OKEImage
+        imageFilter:
+          osFilter: "Oracle Linux"
+          osVersionFilter: "8"
+
+  # ネットワーク（ワーカー用サブネット / NSG）
+  networkConfig:
+    primaryVnicConfig:
+      subnetConfig:
+        subnetId: <worker-subnet-ocid>
+      # NSG を使わない場合はこのブロックごと削除してよい
+      networkSecurityGroupConfigs:
+        - networkSecurityGroupId: <worker-nsg-ocid>

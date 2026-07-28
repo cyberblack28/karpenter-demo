@@ -1,0 +1,43 @@
+# NodePool: いつ・どれだけノードを作る／消すかの運用ルール
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: default
+spec:
+  template:
+    spec:
+      # デモでは自動失効させない
+      expireAfter: Never
+
+      # どの OCINodeClass を使うか
+      nodeClassRef:
+        group: oci.oraclecloud.com
+        kind: OCINodeClass
+        name: default
+
+      # 起動対象の条件
+      requirements:
+        # オンデマンド（Spot/Preemptible は使わない）
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values:
+            - on-demand
+        # 使ってよいシェイプの候補
+        - key: oci.oraclecloud.com/instance-shape
+          operator: In
+          values:
+            - VM.Standard.E5.Flex
+            - VM.Standard.E4.Flex
+
+  # スケールイン（不要ノードの削除・統合）の挙動
+  disruption:
+    # WhenEmptyOrUnderutilized: 空 or 使用率が低いノードを積極的に統合
+    # （デモを分かりやすくしたい場合は WhenEmpty でもよい）
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    # 統合を判断するまでの待ち時間（デモでは短め）
+    consolidateAfter: 1m
+
+  # クラスタ全体でこの NodePool が確保できる上限（暴走防止の安全弁）
+  limits:
+    cpu: 16
+    memory: 64Gi
