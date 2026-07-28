@@ -1,0 +1,29 @@
+# inflate: デモ用のダミー Deployment
+# 1 Pod で 1 CPU を要求し、意図的にリソースを「膨らませ」てノード追加を誘発する。
+#
+# ポイント（OKE の cri-o 環境）:
+#   イメージは必ず「完全修飾名（レジストリ込み）」で指定する。
+#   短縮名（例: pause）は OKE ノードで ImageInspectError になり得るため registry.k8s.io/... と書く。
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflate
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: inflate
+  template:
+    metadata:
+      labels:
+        app: inflate
+    spec:
+      # この Deployment の Pod は Karpenter 管理ノードに載る想定
+      terminationGracePeriodSeconds: 0
+      containers:
+        - name: inflate
+          image: registry.k8s.io/pause:3.9
+          resources:
+            requests:
+              cpu: "1"
+              memory: "256Mi"
