@@ -3,6 +3,12 @@
 Oracle Cloud Infrastructure (OCI) の Kubernetes サービス **OKE (Kubernetes Engine)** 上で、
 **Karpenter Provider for OCI (KPO)** を使ったノードオートスケーリングを体験する、初心者向けのハンズオン／デモ用リポジトリです。
 
+## デモ概要
+
+![OKE × Karpenter デモ概要図](docs/images/demo-overview.svg)
+
+> 図：[docs/images/demo-overview.svg](docs/images/demo-overview.svg)（1280×720 / 16:9・スライド貼り付け可）
+
 ## このデモで学べること
 
 - Karpenter とは何か / 従来の Cluster Autoscaler と何が違うのか

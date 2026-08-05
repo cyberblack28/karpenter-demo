@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" font-family="'Noto Sans JP','Yu Gothic UI','Yu Gothic','Hiragino Sans','Meiryo',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0F9D8C"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#C74634"/>
+    </marker>
+  </defs>
+
+  <rect width="1280" height="720" fill="#FFFFFF"/>
+
+  <!-- ===== Title ===== -->
+  <text x="640" y="46" text-anchor="middle" font-size="32" font-weight="700" fill="#1E293B">OKE × Karpenter デモ概要</text>
+  <text x="640" y="78" text-anchor="middle" font-size="17" fill="#64748B">Pod の増減に応じて、ワーカーノードが自動で増減する</text>
+
+  <!-- ===== kubectl (operator) ===== -->
+  <rect x="40" y="282" width="162" height="86" rx="10" fill="#FFFFFF" stroke="#64748B" stroke-width="2"/>
+  <text x="121" y="313" text-anchor="middle" font-size="17" font-weight="700" fill="#334155">kubectl</text>
+  <text x="121" y="338" text-anchor="middle" font-size="13" fill="#64748B">scale deployment</text>
+  <text x="121" y="357" text-anchor="middle" font-size="13" fill="#64748B">（Pod を増減）</text>
+
+  <!-- ===== OKE Cluster ===== -->
+  <rect x="240" y="118" width="580" height="500" rx="14" fill="#F8FAFC" stroke="#326CE5" stroke-width="2.5"/>
+  <text x="262" y="148" font-size="20" font-weight="700" fill="#326CE5">OKE クラスタ</text>
+
+  <!-- Managed node pool -->
+  <rect x="270" y="166" width="520" height="116" rx="9" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.8"/>
+  <text x="288" y="192" font-size="15" font-weight="700" fill="#334155">既存ノードプール（マネージド）</text>
+  <text x="288" y="212" font-size="12.5" fill="#64748B">Karpenter 本体を動かす土台。デモ中は増減しない</text>
+
+  <rect x="288" y="222" width="230" height="48" rx="7" fill="#EEF4FF" stroke="#326CE5" stroke-width="1.5"/>
+  <text x="403" y="242" text-anchor="middle" font-size="14" font-weight="700" fill="#1E40AF">karpenter controller</text>
+  <text x="403" y="260" text-anchor="middle" font-size="11.5" fill="#475569">KPO ＝ OCI プロバイダー</text>
+
+  <rect x="535" y="222" width="237" height="48" rx="7" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="653" y="242" text-anchor="middle" font-size="13.5" font-weight="700" fill="#334155">OCINodeClass / NodePool</text>
+  <text x="653" y="260" text-anchor="middle" font-size="11.5" fill="#64748B">ノードの作り方・運用ルール</text>
+
+  <!-- Pending pods strip -->
+  <rect x="270" y="296" width="520" height="46" rx="8" fill="#FFF7ED" stroke="#F59E0B" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <text x="530" y="325" text-anchor="middle" font-size="15" font-weight="700" fill="#B45309">Pod が Pending（載せる場所がない）</text>
+
+  <!-- Karpenter-managed nodes -->
+  <rect x="270" y="356" width="520" height="244" rx="9" fill="#FFFFFF" stroke="#0F9D8C" stroke-width="2" stroke-dasharray="7 4"/>
+  <text x="288" y="382" font-size="15" font-weight="700" fill="#0F766E">Karpenter 管理ノード（BYON）</text>
+  <text x="288" y="402" font-size="12.5" fill="#64748B">OKE ノードプールには所属しない自己管理ノード</text>
+
+  <!-- node chips -->
+  <g>
+    <rect x="288" y="416" width="150" height="96" rx="8" fill="#F0FDFA" stroke="#0F9D8C" stroke-width="1.6"/>
+    <text x="363" y="438" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0F766E">Node</text>
+    <rect x="302" y="450" width="55" height="24" rx="4" fill="#CCFBF1" stroke="#5EEAD4"/>
+    <text x="329.5" y="467" text-anchor="middle" font-size="11" fill="#0F766E">Pod</text>
+    <rect x="369" y="450" width="55" height="24" rx="4" fill="#CCFBF1" stroke="#5EEAD4"/>
+    <text x="396.5" y="467" text-anchor="middle" font-size="11" fill="#0F766E">Pod</text>
+    <text x="363" y="497" text-anchor="middle" font-size="11" fill="#64748B">VM.Standard.E5.Flex</text>
+  </g>
+  <g>
+    <rect x="455" y="416" width="150" height="96" rx="8" fill="#F0FDFA" stroke="#0F9D8C" stroke-width="1.6"/>
+    <text x="530" y="438" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0F766E">Node</text>
+    <rect x="469" y="450" width="55" height="24" rx="4" fill="#CCFBF1" stroke="#5EEAD4"/>
+    <text x="496.5" y="467" text-anchor="middle" font-size="11" fill="#0F766E">Pod</text>
+    <rect x="536" y="450" width="55" height="24" rx="4" fill="#CCFBF1" stroke="#5EEAD4"/>
+    <text x="563.5" y="467" text-anchor="middle" font-size="11" fill="#0F766E">Pod</text>
+    <text x="530" y="497" text-anchor="middle" font-size="11" fill="#64748B">VM.Standard.E4.Flex</text>
+  </g>
+  <g>
+    <rect x="622" y="416" width="150" height="96" rx="8" fill="#FFFFFF" stroke="#0F9D8C" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <text x="697" y="452" text-anchor="middle" font-size="30" font-weight="700" fill="#0F9D8C">＋</text>
+    <text x="697" y="478" text-anchor="middle" font-size="12" fill="#0F766E">必要なだけ追加</text>
+    <text x="697" y="497" text-anchor="middle" font-size="11" fill="#64748B">／ 不要なら削除</text>
+  </g>
+
+  <text x="530" y="542" text-anchor="middle" font-size="13" fill="#0F766E">Pod の需要にあわせて Karpenter が自動で増減させる</text>
+  <rect x="288" y="556" width="484" height="30" rx="6" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="530" y="576" text-anchor="middle" font-size="12" fill="#475569">安全弁：NodePool の limits（cpu 16 / memory 64Gi）を超えては増えない</text>
+
+  <!-- ===== OCI Compute ===== -->
+  <rect x="880" y="196" width="350" height="330" rx="14" fill="#FEF7F6" stroke="#C74634" stroke-width="2.5"/>
+  <text x="902" y="226" font-size="20" font-weight="700" fill="#C74634">OCI Compute</text>
+  <text x="902" y="248" font-size="12.5" fill="#94553F">Karpenter がインスタンスを起動 / 終了</text>
+
+  <rect x="906" y="268" width="298" height="52" rx="8" fill="#FFFFFF" stroke="#E2A79B" stroke-width="1.6"/>
+  <text x="1055" y="290" text-anchor="middle" font-size="13.5" font-weight="700" fill="#7C2D12">Compute インスタンス</text>
+  <text x="1055" y="309" text-anchor="middle" font-size="11.5" fill="#94553F">OKE イメージ ＋ セカンダリ VNIC</text>
+
+  <rect x="906" y="332" width="298" height="52" rx="8" fill="#FFFFFF" stroke="#E2A79B" stroke-width="1.6"/>
+  <text x="1055" y="354" text-anchor="middle" font-size="13.5" font-weight="700" fill="#7C2D12">Compute インスタンス</text>
+  <text x="1055" y="373" text-anchor="middle" font-size="11.5" fill="#94553F">オンデマンド / 複数シェイプから選択</text>
+
+  <rect x="906" y="396" width="298" height="52" rx="8" fill="#FFFFFF" stroke="#E2A79B" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <text x="1055" y="428" text-anchor="middle" font-size="13" fill="#94553F">…必要に応じて増減</text>
+
+  <rect x="906" y="462" width="298" height="44" rx="7" fill="#FDECE9" stroke="#E2A79B"/>
+  <text x="1055" y="480" text-anchor="middle" font-size="11.5" fill="#7C2D12">VCN-Native Pod Networking</text>
+  <text x="1055" y="497" text-anchor="middle" font-size="11" fill="#94553F">Pod 用サブネットのセカンダリ VNIC が必須</text>
+
+  <!-- ===== Arrows ===== -->
+  <!-- (1) kubectl -> pending -->
+  <path d="M 204 319 L 264 319" stroke="#334155" stroke-width="2.4" fill="none" marker-end="url(#arrow)"/>
+  <circle cx="234" cy="294" r="13" fill="#334155"/>
+  <text x="234" y="299" text-anchor="middle" font-size="14" font-weight="700" fill="#FFFFFF">1</text>
+
+  <!-- (2) controller -> OCI -->
+  <path d="M 792 240 C 840 240, 848 258, 876 268" stroke="#334155" stroke-width="2.4" fill="none" marker-end="url(#arrow)"/>
+  <circle cx="843" cy="222" r="13" fill="#334155"/>
+  <text x="843" y="227" text-anchor="middle" font-size="14" font-weight="700" fill="#FFFFFF">2</text>
+
+  <!-- (3) OCI -> karpenter nodes -->
+  <path d="M 876 430 C 840 430, 832 452, 794 452" stroke="#0F9D8C" stroke-width="2.4" fill="none" marker-end="url(#arrowTeal)"/>
+  <circle cx="841" cy="410" r="13" fill="#0F9D8C"/>
+  <text x="841" y="415" text-anchor="middle" font-size="14" font-weight="700" fill="#FFFFFF">3</text>
+
+  <!-- (4) consolidation: nodes -> OCI (terminate) -->
+  <path d="M 794 556 C 836 556, 850 530, 876 508" stroke="#C74634" stroke-width="2.4" fill="none" stroke-dasharray="7 4" marker-end="url(#arrowRed)"/>
+  <circle cx="852" cy="562" r="13" fill="#C74634"/>
+  <text x="852" y="567" text-anchor="middle" font-size="14" font-weight="700" fill="#FFFFFF">4</text>
+
+  <!-- ===== Step legend ===== -->
+  <line x1="40" y1="640" x2="1240" y2="640" stroke="#E2E8F0" stroke-width="1.5"/>
+
+  <circle cx="52" cy="668" r="12" fill="#334155"/>
+  <text x="52" y="673" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">1</text>
+  <text x="72" y="666" font-size="13.5" font-weight="700" fill="#334155">Pod を増やす</text>
+  <text x="72" y="685" font-size="12" fill="#64748B">載る場所がなく Pending になる</text>
+
+  <circle cx="352" cy="668" r="12" fill="#334155"/>
+  <text x="352" y="673" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">2</text>
+  <text x="372" y="666" font-size="13.5" font-weight="700" fill="#334155">Karpenter が検知</text>
+  <text x="372" y="685" font-size="12" fill="#64748B">最適なシェイプを選び OCI API を実行</text>
+
+  <circle cx="682" cy="668" r="12" fill="#0F9D8C"/>
+  <text x="682" y="673" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">3</text>
+  <text x="702" y="666" font-size="13.5" font-weight="700" fill="#0F766E">ノードが Join</text>
+  <text x="702" y="685" font-size="12" fill="#64748B">数十秒〜数分で Ready → Pod が Running</text>
+
+  <circle cx="1002" cy="668" r="12" fill="#C74634"/>
+  <text x="1002" y="673" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">4</text>
+  <text x="1022" y="666" font-size="13.5" font-weight="700" fill="#C74634">Consolidation</text>
+  <text x="1022" y="685" font-size="12" fill="#64748B">Pod が減ると不要ノードを自動削除</text>
+</svg>
