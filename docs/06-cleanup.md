@@ -12,6 +12,12 @@ kubectl delete -f manifests/inflate.yaml
 
 NodePool を消すと、その NodePool が作ったノードもすべて片付きます。
 
+> **⚠️ 片付けは必ず `kubectl` から**
+> Karpenter のノードは BYON（自己管理ノード）で、**OKE ノードプールには所属しません**。
+> そのため OCI コンソールでノードプールを操作しても消えません。
+> また、コンソールからインスタンスを直接終了させるのも非推奨です
+> （Karpenter の管理状態とズレます）。必ず下記の `kubectl delete` を使ってください。
+
 ```bash
 kubectl delete -f manifests/nodepool.yaml
 ```

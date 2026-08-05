@@ -7,10 +7,11 @@ Karpenter に「どんなノードを、いつ作る／消すか」を教える 
 
 [manifests/ocinodeclass.yaml](../manifests/ocinodeclass.yaml) の `<...>` を自分の環境の値に置き換えます。
 
-置き換えるのは主に次の 2 つ（[01](01-prerequisites.md) で控えた値）：
+置き換えるのは次の 3 つ（[01](01-prerequisites.md) で控えた値）：
 
-- `subnetId: <worker-subnet-ocid>`
+- `subnetId: <worker-subnet-ocid>` … ワーカーノード用
 - `networkSecurityGroupId: <worker-nsg-ocid>`（NSG 未使用なら該当ブロックごと削除）
+- `subnetId: <pod-subnet-ocid>` … **Pod 用（VCN-Native では必須）**。ワーカーと同じ OCID でも可
 
 適用します。
 
@@ -24,7 +25,18 @@ kubectl apply -f manifests/ocinodeclass.yaml
 | --- | --- |
 | `shapeConfigs` | Flex シェイプの OCPU / メモリの候補 |
 | `volumeConfig.bootVolumeConfig.imageConfig` | 使う OS イメージ（`OKEImage` で OKE 対応イメージを自動選択） |
-| `networkConfig.primaryVnicConfig` | ノードを置くサブネット / NSG |
+| `networkConfig.primaryVnicConfig` | **ノード本体**を置くサブネット / NSG |
+| `networkConfig.secondaryVnicConfigs` | **Pod 用**のセカンダリ VNIC。VCN-Native では**必須** |
+
+> **⚠️ 最大のハマりどころ：`secondaryVnicConfigs` の設定漏れ**
+> VCN-Native クラスタでこれを書き忘れると、ノードは起動して**クラスタ参加まで成功する**のに、
+> CNI（`vcn-native-ip-cni`）が乗らず **NotReady のまま**になります。
+> 症状と切り分け手順は [99-troubleshooting.md](99-troubleshooting.md) にまとめています。
+
+> **`ipCount` の決め方**
+> そのノードで Pod に割り当てる IP の数です（2 の累乗、最大 256）。
+> 既存ノードプールの `max-pods-per-node` と同程度にしておくと揃った挙動になります
+> （例：`31` なら `32`）。デモ用途なら `16` で十分です。
 
 ## 2. NodePool（スケールの運用ルール）
 
@@ -54,24 +66,21 @@ kubectl get ocinodeclass
 kubectl get nodepool
 ```
 
+`OCINodeClass` の **READY が `True`** になっていることが重要です。ここが `True` なら、
+サブネット OCID とイメージフィルタの解決に成功しています（OCID の誤りがあると `False` になります）。
+
 両方が表示されれば準備完了です。まだノードは増えません（未スケジュールの Pod がないため）。
-実際に Pod を増やして動きを見るのは次のデモです。
+**NODES が `0`** なのが正しい状態です。実際に Pod を増やして動きを見るのは次のデモです。
 
-## （参考）VCN-Native Pod Networking を使う場合
+## （参考）Flannel クラスタの場合
 
-本デモは Flannel 前提です。OCI VCN-Native CNI を使う環境では、`OCINodeClass` に Pod 用の
-secondary VNIC 設定が必要になります。
+本デモは VCN-Native 前提です。CNI が **Flannel** のクラスタでは、Pod がノードの
+overlay ネットワークを使うため **セカンダリ VNIC は不要**です。次の 2 点を変更してください。
 
-```yaml
-  networkConfig:
-    # ... primaryVnicConfig は同じ ...
-    secondaryVnicConfigs:
-      - subnetConfig:
-          subnetId: <pod-subnet-ocid>
-        ipCount: 32   # 2 の累乗（最大 256）
-```
+1. `OCINodeClass` から `secondaryVnicConfigs` ブロックを**削除**する
+2. Helm values を `settings.ociVcnIpNative: false` にする（[02](02-install-kpo.md)）
 
-あわせて Helm values の `settings.ociVcnIpNative: true` も設定します（[02](02-install-kpo.md)）。
+どちらの CNI かは [01](01-prerequisites.md) の `kubectl get ds -n kube-system` で判別できます。
 
 ## 次へ
 

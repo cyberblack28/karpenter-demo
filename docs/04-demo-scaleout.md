@@ -68,6 +68,34 @@ kubectl describe nodeclaim | head -n 40
 - 「Pending を検知してから **数十秒〜数分** で新ノードが Ready になります」
 - 「`limits.cpu: 16` を超える要求をしても、そこで頭打ちになります（安全弁）」
 
+### 押さえておきたい説明ポイント：2 つの「ノードプール」は別物
+
+聴講者が最も混乱しやすい点です。ここを明示すると理解が一気に進みます。
+
+| 用語 | 実体 | 管理者 |
+| --- | --- | --- |
+| **OKE ノードプール** | OCI のリソース。固定シェイプ・台数を定義 | OKE |
+| **Karpenter NodePool** | Kubernetes の CRD（`karpenter.sh/v1`） | Karpenter |
+
+Karpenter が作ったノードは **BYON（自己管理ノード）** としてクラスタに直接登録されるため、
+**既存の OKE ノードプールには所属しません**。
+
+```bash
+kubectl get nodes -L karpenter.sh/nodepool
+```
+
+> ラベル列に `default` が入るのが Karpenter ノード、**空欄が既存ノードプール**のノードです。
+> OCI コンソールで見ると、Compute のインスタンス一覧には出ますが、
+> **OKE のノードプールのノード数は増えません**。
+
+ノード側のラベルでも確認できます。
+
+```bash
+kubectl get node <新ノード名> -o jsonpath='{.metadata.labels}' | tr ',' '\n' | grep -E "byon|karpenter"
+```
+
+`oci.oraclecloud.com/node.info.byon=true` が付いていれば、マネージドノードプール外のノードです。
+
 ### （応用）上限に当てるデモ
 
 さらに増やすと `limits` で頭打ちになる様子も見せられます。

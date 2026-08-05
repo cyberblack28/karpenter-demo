@@ -46,6 +46,19 @@ karpenter-demo/
 - KPO インストール〜NodePool 作成：15 分程度
 - デモ①②の実演：10〜15 分程度
 
+## 前提環境
+
+本デモは **OCI VCN-Native Pod Networking** のクラスタを前提にしています。
+（Flannel クラスタの場合の差分は [docs/03-nodepool.md](docs/03-nodepool.md) 末尾に記載）
+
+**最初に必ず** 自分のクラスタの CNI を確認してください。ここを間違えるとノードが NotReady のままになります。
+
+```bash
+kubectl get ds -n kube-system
+```
+
+`vcn-native-ip-cni` があれば VCN-Native、`kube-flannel-ds` があれば Flannel です。
+
 > **Note**
 > 本リポジトリの YAML 中の `<...>` は環境固有の値（OCID など）のプレースホルダーです。
 > ご自身の環境の値に置き換えてください。置き換え箇所は [docs/01-prerequisites.md](docs/01-prerequisites.md) にまとめています。

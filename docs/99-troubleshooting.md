@@ -33,7 +33,84 @@ kubectl logs -n karpenter -l app.kubernetes.io/name=karpenter --tail=100
   `manage virtual-network-family` が付いているか。
 - **サブネット/NSG の OCID 誤り**：`OCINodeClass` の値を再確認。
 
-## ノードは起動したが `NotReady` / OKE に Join しない
+## ノードは起動したが `NotReady` のまま（★実際に遭遇した事例）
+
+**最も遭遇しやすいトラブル**です。ノードが `kubectl get nodes` に**出てくる**のに
+`NotReady` が続く場合、CLUSTER_JOIN は成功しており、原因は **CNI** にあります。
+
+### 症状
+
+```bash
+kubectl describe node <ノード名>
+```
+
+`Conditions` の `Ready` にこのメッセージが出ます。
+
+```
+Ready  False  KubeletNotReady
+  container runtime network not ready: NetworkReady=false
+  reason:NetworkPluginNotReady
+  message:Network plugin returns error: no CNI configuration file in /etc/cni/net.d/.
+```
+
+`/etc/cni/net.d/` に設定を置くのは **CNI の DaemonSet Pod** の仕事なので、
+「**CNI Pod がこのノードに乗っていない**」ことを意味します。
+
+### 切り分け手順
+
+**① そのノードに何が乗っているか**（`describe node` の `Non-terminated Pods` でも可）
+
+```bash
+kubectl get pods -A -o wide | grep <ノード名>
+```
+
+`csi-oci-node` / `kube-proxy` / `proxymux-client` はあるのに **CNI Pod が無い**なら確定です。
+
+**② CNI DaemonSet の配置状況を見る（決定的）**
+
+```bash
+kubectl get ds -n kube-system
+```
+
+`DESIRED` の数を比べます。
+
+```
+NAME                 DESIRED   CURRENT   READY
+csi-oci-node             4         4       4     ← 全ノードに乗っている
+vcn-native-ip-cni        2         2       2     ← Karpenter ノードに乗っていない！
+```
+
+`csi-oci-node` が 4 なのに `vcn-native-ip-cni` が 2 → **Karpenter ノード 2 台が CNI の対象外**。
+
+### 原因と対処
+
+| クラスタの CNI | 必要な設定 |
+| --- | --- |
+| `vcn-native-ip-cni` がある（**VCN-Native**） | Helm values `ociVcnIpNative: true` ＋ `OCINodeClass` に `secondaryVnicConfigs` |
+| `kube-flannel-ds` がある（**Flannel**） | Helm values `ociVcnIpNative: false` ＋ `secondaryVnicConfigs` は**不要** |
+
+**VCN-Native なのに設定漏れだった場合**の修正手順：
+
+```bash
+# 1. values.yaml を ociVcnIpNative: true に修正して反映
+helm upgrade karpenter karpenter-provider-oci/karpenter --values values.yaml --namespace karpenter
+```
+
+```bash
+# 2. OCINodeClass に secondaryVnicConfigs を追加して適用
+kubectl apply -f manifests/ocinodeclass.yaml
+```
+
+```bash
+# 3. 詰まったノードを作り直させる
+kubectl delete nodeclaims --all
+```
+
+`vcn-native-ip-cni` の `DESIRED` が既存ノード数から増えれば成功のサインです。
+
+## ノードが OKE に Join しない（`kubectl get nodes` に出てこない）
+
+こちらは上とは別の問題です。ノードが**そもそも一覧に現れない**場合：
 
 - **CLUSTER_JOIN ポリシー漏れ**：動的グループとその
   `{CLUSTER_JOIN}` ポリシー（[01](01-prerequisites.md) の 4-2）を確認。

@@ -24,8 +24,8 @@ helm search repo karpenter-provider-oci/karpenter --versions
 settings:
   clusterCompartmentId: "<cluster-compartment-id>"
   vcnCompartmentId: "<vcn-compartment-id>"
-  # 本デモは Flannel（overlay）前提のため false
-  ociVcnIpNative: false
+  # 本デモは OCI VCN-Native Pod Networking 前提のため true
+  ociVcnIpNative: true
   # API サーバーのプライベート IP
   apiserverEndpoint: "<apiserver-private-ip>"
 
@@ -33,9 +33,13 @@ settings:
 logLevel: info
 ```
 
-> **Note**
-> `ociVcnIpNative: true` は OCI VCN-Native Pod Networking を使う場合の設定です。
-> 本デモ（Flannel）では `false` のままにします。
+> **⚠️ 重要：`ociVcnIpNative` は CNI と必ず一致させること**
+> - **VCN-Native** クラスタ … `true`（本デモ）
+> - **Flannel** クラスタ … `false`
+>
+> ここが実際の CNI と食い違うと、ノードは起動・クラスタ参加まで進むものの
+> **CNI が初期化されず NotReady のまま**になります（[99](99-troubleshooting.md) 参照）。
+> [01](01-prerequisites.md) の `kubectl get ds -n kube-system` で必ず確認してください。
 
 ## 3. インストール
 
@@ -47,6 +51,14 @@ helm install karpenter karpenter-provider-oci/karpenter \
   --values values.yaml \
   --namespace karpenter \
   --create-namespace
+```
+
+インストール後に `values.yaml` を変更した場合は、`upgrade` で反映します。
+
+```bash
+helm upgrade karpenter karpenter-provider-oci/karpenter \
+  --values values.yaml \
+  --namespace karpenter
 ```
 
 ## 4. 起動確認
