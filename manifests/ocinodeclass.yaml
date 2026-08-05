@@ -22,11 +22,20 @@ spec:
           osFilter: "Oracle Linux"
           osVersionFilter: "8"
 
-  # ネットワーク（ワーカー用サブネット / NSG）
+  # ネットワーク（OCI VCN-Native Pod Networking 前提）
   networkConfig:
+    # ワーカーノード本体の VNIC
     primaryVnicConfig:
       subnetConfig:
         subnetId: <worker-subnet-ocid>
       # NSG を使わない場合はこのブロックごと削除してよい
       networkSecurityGroupConfigs:
         - networkSecurityGroupId: <worker-nsg-ocid>
+
+    # Pod 用のセカンダリ VNIC（VCN-Native では必須）
+    # これが無いと CNI が初期化されず、ノードが NotReady のままになる
+    secondaryVnicConfigs:
+      - subnetConfig:
+          # Pod サブネット。ワーカーと同じサブネット OCID でも可
+          subnetId: <pod-subnet-ocid>
+        ipCount: 16   # 2 の累乗（最大 256）
