@@ -32,6 +32,7 @@ Karpenter・OKE の知識は不要で、このシナリオを上から順に進�
 | 4 | [docs/04-demo-scaleout.md](docs/04-demo-scaleout.md) | 【デモ①】Pod を増やしてノード自動追加 |
 | 5 | [docs/05-demo-consolidation.md](docs/05-demo-consolidation.md) | 【デモ②】Pod を減らしてノード自動削除・統合 |
 | 6 | [docs/06-cleanup.md](docs/06-cleanup.md) | 後片付け |
+| - | [docs/90-ca-vs-karpenter.md](docs/90-ca-vs-karpenter.md) | 【参考】Cluster Autoscaler との詳細比較・選択の目安 |
 | - | [docs/99-troubleshooting.md](docs/99-troubleshooting.md) | よくあるハマりどころ |
 
 ## ディレクトリ構成
